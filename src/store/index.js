@@ -5,7 +5,7 @@ export default createStore({
     list: [
       { title: "吃饭", complete: false },
       { title: "睡觉", complete: false },
-      { title: "打豆豆", complete: true },
+      { title: "敲代码", complete: false },
     ],
   },
   mutations: {

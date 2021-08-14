@@ -1,7 +1,7 @@
 <template>
     <div class="container">
        <div>
-            已完成 {{isComplete}} /全部 {{all}}
+            已完成 {{isComplete}} /全部 {{list.length}}
        </div>
 
         <div v-if="isComplete>0">
@@ -10,20 +10,28 @@
     </div>
 </template>
 <script>
-import {defineComponent,ref} from 'vue'
+import {defineComponent,ref,computed} from 'vue'
 export default defineComponent({
     name:'navFooter',
-    setup(){
-        let isComplete=ref(3)
-        let all=ref(10)
+    props:{
+      list:{
+          tyep:Array,
+          required:true
+      }
+    },
+    setup(props,ctx){
+        let isComplete=computed(()=>{
+            return props.list.filter(item=>item.complete).length
+        })
+      
         let clear=()=>{
             console.log('clear')
+            ctx.emit('clear',props.list.filter(item=>!item.complete))
 
         }
 
         return {
             isComplete,
-            all,
             clear
         }
 

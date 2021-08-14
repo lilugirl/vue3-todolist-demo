@@ -1,49 +1,75 @@
 <template>
-   <button @click="goto">关于</button>
-  <nav-header></nav-header>
-  <nav-main></nav-main>
-  <nav-footer></nav-footer>
+  <nav-header @add="add"></nav-header>
+  <nav-main :list="list" @del="del"></nav-main>
+  <nav-footer :list="list" @clear="clear"></nav-footer>
 </template>
 <script>
-import { defineComponent,ref,reactive,toRefs,computed } from 'vue'
-import {useStore} from 'vuex'
-import {useRouter} from 'vue-router'
-import NavHeader from '../components/navHeader/NavHeader'
-import NavFooter from '../components/navFooter/NavFooter'
-import NavMain from '../components/navMain/NavMain'
+import {
+  defineComponent,
+  ref,
+  reactive,
+  toRefs,
+  computed,
+  onMounted,
+  onUnmounted,
+} from "vue";
+import { useStore } from "vuex";
+import { useRouter, useRoute } from "vue-router";
+import NavHeader from "../components/navHeader/NavHeader";
+import NavFooter from "../components/navFooter/NavFooter";
+import NavMain from "../components/navMain/NavMain";
 export default defineComponent({
-  name:'Home', 
+  name: "Home",
   // 接收父组件的数据
-  props:{
-  },
+  props: {},
   // 定义子组件
-  components:{
+  components: {
     NavHeader,
     NavFooter,
-    NavMain
-
+    NavMain,
   },
-  setup(props,ctx) {
-    let router=useRouter()
-    let store=useStore()
-    let list=computed(()=>{
-      return store.state.list
-    })
-    console.log(router)
-    let goto=()=>{
-      router.push('about')
+  setup(props, ctx) {
+    let store = useStore();
+    let value = ref("");
+
+    let list = computed(() => {
+      return store.state.list;
+    });
+
+    let add = (val) => {
+      value.value = val;
+
+      let flag = true;
+      list.value.map((item) => {
+        if (item.title === value.value) {
+          flag = false;
+          alert("任务已存在");
+        }
+      })
+      if (flag) {
+        store.commit("addTodo", {
+          title: val,
+          computed: false,
+        });
+      }
+    };
+
+    let del=(val)=>{
+      store.commit('delTodo',val)
     }
-    
+
+    let clear=(val)=>{
+      store.commit('clear',val)
+    }
     return {
+      add,
+      value,
       list,
-      goto
-    
-      
-
-    }
+      del,
+      clear
+    };
   },
-})
+});
 </script>
 <style scoped lang='scss'>
-
 </style>

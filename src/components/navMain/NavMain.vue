@@ -1,33 +1,41 @@
 <template>
-    <div>
+    <div v-if="list.length>0">
       <li class="item" v-for="(item,index) of list" :key="index">{{item.title}}
           <input type="checkbox" v-model="item.complete">
           <button class="del" @click="del(item,index)">删除</button>
           </li> 
       
     </div>
+    <div v-else>
+      暂无任务
+    </div>
 </template>
 <script>
-import {defineComponent,ref} from 'vue'
+import {computed, defineComponent,ref} from 'vue'
+
+
 export default defineComponent({
     name:'navMain',
+    props:{
+        list:{
+            type:Array,
+            required:true
+        }
+    },
+    emits:['del'],
 
-    setup(){
+    setup(props,ctx){
 
-       let list=ref([
-           {title:'吃饭',complete:false},
-           {title:'睡觉',complete:false},
-           {title:'打豆豆',complete:false}
-       ])
-
+      
        let del=(item,index)=>{
            console.log(item,index)
-
+           ctx.emit('del',index)
        }
 
        return {
-           list,
            del
+         
+           
        }
     }
 })
